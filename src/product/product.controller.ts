@@ -23,8 +23,8 @@ export class ProductController implements OnModuleInit {
 
     @Get(':id')
     @UseGuards(AuthGuard)
-    private async findOne(@Param('id', ParseIntPipe) id: number): Promise<Observable<FindOneResponse>>{
-        return this.svc.findOne({ id })
+    private async findOne(@Param('id', ParseIntPipe) productId: number): Promise<Observable<FindOneResponse>>{
+        return this.svc.findOne({ productId })
     }
 
 

@@ -1,11 +1,10 @@
 /* eslint-disable */
-import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
-import { util, configure } from 'protobufjs/minimal';
-import * as Long from 'long';
-import { Observable } from 'rxjs';
+import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 
-export const protobufPackage = 'product';
+export const protobufPackage = "product";
 
+/** CREATE PRODUCT */
 export interface CreateProductRequest {
   name: string;
   sku: string;
@@ -16,11 +15,12 @@ export interface CreateProductRequest {
 export interface CreateProductResponse {
   status: number;
   error: string[];
-  id: number;
+  productId: number;
 }
 
+/** FIND ONE */
 export interface FindOneData {
-  id: number;
+  productId: number;
   name: string;
   sku: string;
   stock: number;
@@ -28,7 +28,7 @@ export interface FindOneData {
 }
 
 export interface FindOneRequest {
-  id: number;
+  productId: number;
 }
 
 export interface FindOneResponse {
@@ -37,9 +37,9 @@ export interface FindOneResponse {
   data: FindOneData | undefined;
 }
 
+/** DECREASE STOCK */
 export interface DecreaseStockRequest {
   id: number;
-  orderId: number;
 }
 
 export interface DecreaseStockResponse {
@@ -47,7 +47,7 @@ export interface DecreaseStockResponse {
   error: string[];
 }
 
-export const PRODUCT_PACKAGE_NAME = 'product';
+export const PRODUCT_PACKAGE_NAME = "product";
 
 export interface ProductServiceClient {
   createProduct(request: CreateProductRequest): Observable<CreateProductResponse>;
@@ -71,24 +71,17 @@ export interface ProductServiceController {
 
 export function ProductServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ['createProduct', 'findOne', 'decreaseStock'];
+    const grpcMethods: string[] = ["createProduct", "findOne", "decreaseStock"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcMethod('ProductService', method)(constructor.prototype[method], method, descriptor);
+      GrpcMethod("ProductService", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
-      GrpcStreamMethod('ProductService', method)(constructor.prototype[method], method, descriptor);
+      GrpcStreamMethod("ProductService", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
 
-export const PRODUCT_SERVICE_NAME = 'ProductService';
-
-// If you get a compile-error about 'Constructor<Long> and ... have no overlap',
-// add '--ts_proto_opt=esModuleInterop=true' as a flag when calling 'protoc'.
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
-}
+export const PRODUCT_SERVICE_NAME = "ProductService";
